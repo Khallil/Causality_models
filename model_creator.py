@@ -1,70 +1,91 @@
 #coding: utf-8
-# How many times steps ?
-    # 4
 
-# For each time step specify the actors, if more than 2,
-# precise if their impact percentage 0%->100%
-    # 0 - CO
-    # 1 - C
-    # 2 - (A,100) (B,100)
-    # 3 - D
+steps = [   
+    (0, # time
+        [('CO', # actorss 
+            [('C',100)] # cons_actors
+            )])
+    (1, 
+        [ ('C',
+            [('B',100),('A',100)]
+            )]),         
+    (2,
+        [ ('A',
+            [('D',100)]),
+            ('B',
+            [('D',100)]
+        )]) ,
+    (3,
+        [('D',
+            [] # fin de la chaine, cons_actors vides
+        )])
+]
 
-# Fils n Papa v Maman -> True
-# Papa v Maman n Fils -> True
-
-# Format cellule acteur : 
-        #       [ n_a  n_con, prob, isActive]
-steps = [   (0, [('CO',('C'),100,False)] )  , 
-            (1, [('C',('B','A'),100,False)] ) , 
-            (2, [('A',('D'),100,False),('B',('D'),100,False)] ) ,
-            (3,[('D',100,False)]) ]
-PROB_V = 0 # Position of the probability value in actor tuple
-ACTOR = 1 # Position of the actor tuple in time tuple
-NAME_A = 0 # Position of the actor's name in actor tuple
+PROB_V = 1 # Position of the probability value in const_actor tuple
+ACTORS = 1 # Position of the actor tuple in step tuple
+C_ACTOR = 1 # Position of the cons_actor in actor tuple
+NAME_A = 0 # Position of the actor's name in actor tuple and cons_actor name in cons_actor tuple
 TIME_N = 0 # Position of the time number
-# ARG = et si le court order avait dit true
 
+# arg = 'X' signifie, si 'X' est activé que se passe t-il ?
 arg = 'C'
+
 def get_time_position():
     for s in steps:
         print s
-        for actor in s[ACTOR]:
+        for actor in s[ACTORS]:
             if actor[NAME_A] == arg:
                 print "ça return"
-                return s[PROB_V]
+                return s[TIME_N],actor
 
 # get the time position 
-time = get_time_position()
-print time
+time,actor = get_time_position()
 
-# going through the logical path
-# on start from get_time
-i = time
-while True:    
-    if i == len(steps)-1:
-        print "final cause at i = ",i
-        break
+def update_dict(dico,key,proba):
+    if key in dico:
+        dico[key] += proba
     else:
-        for actor in steps[i][1]:
-            print actor
-        # on parcours chaque acteur sur la timeline 
-        # et additionne la probabilité total si l'actor est a True sinon on skip
-            # on lance le random sur probabilité
-            # si retour == true
-                # on set 
-        # 
-    i+=1    
-    
-#    on assign True à tous les éléments suivants (qui on chacun leur pourcentage de réussite)
+        dico[key] = proba
 
+# on start depuis l'arg donné
+i = time
 
-
-
-# 20    30      50
-# 51
-
-# 50 + 50 + 50
-# 91
-
-# 50     20      30
-# 50        
+#while True:
+while i < len(steps): # pour faire des petits tests
+    cons_actors = dict() # création du dict pour sauver cons_actors activé
+    # on parcours etape par etape
+    step = steps[i]
+    # si arg
+    if i == time:
+        # pour chacun de ses c_actor
+        for c_actor in actor[C_ACTOR]
+            # si c_actor deja dans le dict
+                # on ajoute la proba associé a ce c_actor a la key
+            # sinon
+                # on crée la key et ajoute la proba associé a ce c_actor
+            update_dict(cons_actors,c_actor[NAME_A],c_actor[PROB_V])  
+        # next step
+        i+=1
+        continue
+    # si len(cons_actors) > 0 
+    if len(cons_actors) > 0:
+        # pour chaque acteur de la step,
+        for actor in step[ACTORS]
+            # si actor présent dans cons_actor
+            if actor[NAME_A] in cons_actors:
+                # on enleve l'actor de cons_actor
+                # si sa proba est > 50
+                if cons_actors[actor[NAME_A]] > 50:
+                    # pour chacun de ses c_actor
+                    for c_actor in actor[C_ACTOR]:
+                        # si c_actor deja dans le dict
+                            # on ajoute la proba associé a ce c_actor a la key
+                        # sinon
+                            # on crée la key et ajoute la proba associé a ce c_actor
+                        update_dict(cons_actors,c_actor[NAME_A],c_actor[PROB_V])
+                del cons_actors[actor[NAME_A]]                
+    # sinon
+        # on affiche que les acteurs de la step d'avant n'ont pas réussi a effectué l'action
+    else:
+        print "les acteurs de la step d'avant n'ont pas réussi a effectué l'opération"
+    i+=1
