@@ -31,7 +31,7 @@ TIME_N = 0 # Position of the time number
 # arg = 'X' signifie, si 'X' est le seul activé au départ sur sa timeline?
 arg = 'C'
 # dest = 'D' signifie, 'D' est-il activé ?
-dest = 'D'
+dest = 'D2'
 
 def get_time_position():
     for s in steps:
@@ -81,7 +81,7 @@ while i < len(steps): # pour faire des petits tests
                 if cons_actors[actor[NAME_A]] > 50:
                     if actor[NAME_A] == dest:
                         print "Oui!"
-                        exit(0)
+                        #exit(0)
                     #print "Activé : actor",actor[NAME_A]
                     # pour chacun de ses c_actor
                     for c_actor in actor[C_ACTOR]:
@@ -93,7 +93,7 @@ while i < len(steps): # pour faire des petits tests
                 else:
                     if actor[NAME_A] == dest:
                         print "Non!"
-                        exit(0)
+                        #exit(0)
 
                     #print "Non Activé : actor",actor[NAME_A]
                 del cons_actors[actor[NAME_A]]                
